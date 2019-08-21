@@ -9,12 +9,37 @@ var client = require('twilio')(accountSid, authToken);
 
 
 var options = {
-	host: 'www.badaboom.io',
-	port: '80',
-	path: '/barbershop/index.php/api/v1/customers',
-	// auth: 'YXNzaW1hZGRvdXM6YXNzaW1hZGRvdXM='
+	host: 'www.XXXX.XXX',
+	port: 'XX',
+	path: '/XXXX/',
 	headers: {'Authorization':'Basic ' + process.env.BASIC_AUTH},
 	}
+
+// GET /customers to get all contact info
+// Response in my case 
+// [
+//   { id: --,
+//     firstName: --,
+//     lastName: --,
+//     email: --,
+//     phone: --,
+//     address: --,
+//     city: --,
+//     zip: --,
+//     notes: --}
+//     ,
+//   { id: --,
+//     firstName: --,
+//     lastName: --,
+//     email: --,
+//     phone: --,
+//     address: --,
+//     city: --,
+//     zip: --,
+//     notes: --},
+// 	..
+// 	..
+// ]
 
 var req = http.request(options,function(resp){
 	var str = ''
@@ -30,7 +55,8 @@ var req = http.request(options,function(resp){
 
 })
 
-
+// return numbers with format +1XXXXXXXXXX
+// otherwise return 
 function phoneCheck(num)
 {
 	regex = /[\(\)\- ]/gi;
@@ -46,52 +72,20 @@ function phoneCheck(num)
 	return mod_num
 }
 
-function sendMsg(obj){
+function sendMsg(customers){
 
-	// console.dir(obj)
-	obj.forEach((customer) => {
-		msg = `Hey ${customer.firstName}. I am texting because you have scheduled with Kesete through our application. I’d like to ask you for a favor. Would you mind taking a few minutes to write a review for us please? Your comments will help us a lot. We build websites, apps and just about everything in between. Our goal is to be a formimdable minority-owned tech company. https://www.thumbtack.com/reviews/services/365286084003225603/write `
-		msg_contact = 'If you have any question pls don\'t hesitate to contact us here: www.d3.marketing tel: +1 (601) 255-8172 ' 
-		// console.log(msg)
-		// console.log(msg_contact)
+	customers.forEach((customer) => {
+		msg = `Hey ${customer.firstName} <rest of your msg>`
+
 		num = phoneCheck(customer.phone)
-
-		if (customer.firstName.toLocaleLowerCase() == 'hamdi' || customer.firstName.toLocaleLowerCase() == 'najm')
-		{
-			console.log('=========no contact list ' + customer.firstName)
-			return
-		}
-		if (phoneCheck(customer.phone) == '+14155701122') {
-			console.log('contact list ' + customer.firstName + ' ' + customer.phone)
-		}
-
-
-
-		// client.messages
-		//   .create({
-		//      body: msg,
-		//      from: '+15104789251',
-		//      to: num
-		//    })
-		//   .then(message => console.log(message.sid)).then(()=>{
-		// 	client.messages
-		//   		.create({
-		//      		body: msg_contact,
-		//      		from: '+15104789251',
-		//      		to: num
-		//    })
-		//   })
-
+		client.messages
+		  .create({
+		     body: msg,
+		     from: '+15104789251',
+		     to: num
+		   })
+		  .then(message => console.log(message.sid))
 	})
-
-
-
-// 	obj.forEach((customer) => {
-// 		msg = `
-// Hey ${customer.firstName}. I am texting because you have scheduled with Kesete through our application. I’d like to ask you for a favor. Would you mind taking a few minutes to write a review for us please? Your comments will help us a lot. We build websites, apps and just about everything in between. Our goal is to be a formimdable minority-owned tech company. https://www.thumbtack.com/reviews/services/365286084003225603/write
-// `
-// 		console.log(msg)
-// 	})
 }
 
 req.end()
